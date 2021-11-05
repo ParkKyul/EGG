@@ -10,5 +10,6 @@ MarkupSafe==2.0.1
 PyJWT==2.3.0
 PyMySQL==1.0.2
 requests==2.26.0
+timedelta==2020.12.3
 urllib3==1.26.7
 Werkzeug==2.0.2
