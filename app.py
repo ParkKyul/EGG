@@ -1,27 +1,38 @@
 import re
+from flask_mysqldb import MySQL
 import pymysql
 import jwt
-import datetime
 import hashlib
-from flask import Flask, render_template, jsonify, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 
-
-connect = pymysql.connect(
-    host="localhost",
-    port=3306,
-    user="root",
-    password="1234",
-    db="dblogin",
-    charset="utf8",
+conn = pymysql.connect(
+    host="localhost", port=3306, user="root", password="jejus3575.", charset="utf8"
 )
-cursor = connect.cursor(pymysql.cursors.DictCursor)
+# database 사용을 위한 cursor 세팅
+cursor = conn.cursor()
+sql = """CREAT TABLE user(
+    id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email varchar(255),
+    password varchar(255)
+)
+"""
 
+# cursor.execute(sql)
+
+conn.commit()
+conn.close()
 
 app = Flask(__name__)
+
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config["UPLOAD_FOLDER"] = "./static/profile_pics"
+# app.config["MYSQL_DATABASE_HOST"] = "localhost"
+# app.config["MYSQL_DATABASE_USER"] = "root"
+# app.config["MYSQL_DATABASE_PASSWORD"] = "jejus3575."
+# app.config["MYSQL_DATABASE_DB"] = "login"
+
+# mysql = MySQL(app)
 
 SECRET_KEY = "SPARTA"
 
@@ -105,7 +116,7 @@ def sign_up():
 
     sql = "insert into users(username, password, profile_name, profile_pic_real, profile_pic, profile_info) values(%s, %s, %s, 'profile_pics/profile_placeholder.png','','')"
     cursor.execute(sql, (username_receive, password_hash, username_receive))
-    connect.commit()
+    conn.commit()
 
     return jsonify({"result": "success"})
 
@@ -151,7 +162,7 @@ def save_img():
                 username,
             ),
         )
-        connect.commit()
+        conn.commit()
 
         return jsonify({"result": "success", "msg": "프로필을 업데이트했습니다."})
     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
@@ -159,4 +170,4 @@ def save_img():
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", port=5000, debug=True)
+    app.run("0.0.0.0", port=33060, debug=True)
